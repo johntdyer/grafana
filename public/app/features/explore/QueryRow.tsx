@@ -21,6 +21,7 @@ import {
   DataSourceStatus,
   PanelData,
   LoadingState,
+  QueryType,
 } from '@grafana/ui';
 import { HistoryItem, ExploreItemState, ExploreId } from 'app/types/explore';
 import { Emitter } from 'app/core/utils/emitter';
@@ -32,6 +33,7 @@ interface QueryRowProps {
   changeQuery: typeof changeQuery;
   className?: string;
   exploreId: ExploreId;
+  queryType: QueryType;
   datasourceInstance: ExploreDataSourceApi;
   datasourceStatus: DataSourceStatus;
   highlightLogsExpressionAction: typeof highlightLogsExpressionAction;
@@ -100,6 +102,7 @@ export class QueryRow extends PureComponent<QueryRowProps> {
 
   render() {
     const {
+      queryType,
       datasourceInstance,
       history,
       query,
@@ -119,6 +122,7 @@ export class QueryRow extends PureComponent<QueryRowProps> {
         <div className="query-row-field flex-shrink-1">
           {QueryField ? (
             <QueryField
+              queryType={queryType}
               datasource={datasourceInstance}
               datasourceStatus={datasourceStatus}
               query={query}
@@ -131,6 +135,7 @@ export class QueryRow extends PureComponent<QueryRowProps> {
             />
           ) : (
             <QueryEditor
+              queryType={queryType}
               datasource={datasourceInstance}
               error={queryResponse.error && queryResponse.error.message ? queryResponse.error.message : null}
               onQueryChange={this.onChange}
@@ -177,6 +182,7 @@ function mapStateToProps(state: StoreState, { exploreId, index }: QueryRowProps)
     tableIsLoading,
     logIsLoading,
     latency,
+    queryType,
   } = item;
   const query = queries[index];
   const datasourceStatus = datasourceError ? DataSourceStatus.Disconnected : DataSourceStatus.Connected;
@@ -196,6 +202,7 @@ function mapStateToProps(state: StoreState, { exploreId, index }: QueryRowProps)
   };
 
   return {
+    queryType,
     datasourceInstance,
     history,
     query,
