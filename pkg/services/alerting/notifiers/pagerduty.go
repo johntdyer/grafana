@@ -84,14 +84,14 @@ func (this *PagerdutyNotifier) Notify(evalContext *alerting.EvalContext) error {
 	this.log.Info("Notifying Pagerduty", "event_type", eventType)
 
 	payloadJSON := simplejson.New()
-	payloadJSON.Set("summary", evalContext.Rule.Name+" - "+evalContext.Rule.Message)
+	payloadJSON.Set("summary", evalContext.Rule.Name)
 	if hostname, err := os.Hostname(); err == nil {
 		payloadJSON.Set("source", hostname)
 	}
 	payloadJSON.Set("severity", "critical")
 	payloadJSON.Set("timestamp", time.Now())
 	payloadJSON.Set("component", "Grafana")
-	payloadJSON.Set("custom_details", customData)
+	payloadJSON.Set("custom_details", customData + "\n" + evalContext.Rule.Message)
 
 	bodyJSON := simplejson.New()
 	bodyJSON.Set("routing_key", this.Key)
